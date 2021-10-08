@@ -34,23 +34,29 @@ Module.register('MMM-Scenes', {
       })
     })
 
-    Promise.allSettled([this._loadModule, this._domReady]).then((result) => {
-      this.scenario = new this.Scenes({
-        duration: this.config.duration,
-        admitAnimation: this.config.admitAnimation,
-        expelAnimation: this.config.expelAnimation,
-        admitDuration: this.config.admitDuration,
-        expelDuration: this.config.expelDuration,
-        expelGap: this.config.expelGap,
-        admitGap: this.config.admitGap,
-        lockString: this.config.lockString
-      }, (message) => {
-        this.tunnel(message)
-      })
+    Promise.allSettled([this._loadModule, this._domReady]).then(result => {
+      this.scenario = new this.Scenes(
+        {
+          duration: this.config.duration,
+          admitAnimation: this.config.admitAnimation,
+          expelAnimation: this.config.expelAnimation,
+          admitDuration: this.config.admitDuration,
+          expelDuration: this.config.expelDuration,
+          expelGap: this.config.expelGap,
+          admitGap: this.config.admitGap,
+          lockString: this.config.lockString
+        },
+        message => {
+          this.tunnel(message)
+        }
+      )
       this.scenario.setLoop(this.config.autoLoop)
       this.scenario.setScenario(this.config.scenario)
       this.ready = true
-      const name = this.config.startScene || this.config.scenario[0]?.name || this.config.scenario[0]
+      const name =
+        this.config.startScene ||
+        this.config.scenario[0]?.name ||
+        this.config.scenario[0]
       if (name || name.name) this.scenario.playByName(name)
     })
 
@@ -59,7 +65,12 @@ Module.register('MMM-Scenes', {
   },
 
   notificationReceived: function (notification, payload, sender) {
-    const availableCommand = ['SCENES_NEXT', 'SCENES_PREV', 'SCENES_ACT', 'SCENES_CURRENT']
+    const availableCommand = [
+      'SCENES_NEXT',
+      'SCENES_PREV',
+      'SCENES_ACT',
+      'SCENES_CURRENT'
+    ]
 
     if (notification === 'DOM_OBJECTS_CREATED') {
       this._domCreated()
@@ -71,13 +82,24 @@ Module.register('MMM-Scenes', {
   },
 
   command: function (command, payload) {
-    console.log(command, payload)
-    const notyet = { ok: false, index: null, name: null, message: 'Not ready yet.' }
-    const userFunc = (payload && typeof payload.callback === 'function') ? payload.callback : () => {}
+    const notyet = {
+      ok: false,
+      index: null,
+      name: null,
+      message: 'Not ready yet.'
+    }
+    const userFunc =
+      payload && typeof payload.callback === 'function'
+        ? payload.callback
+        : () => {}
     if (!this.scenario) return userFunc(notyet)
     const { name = '', index = -1, options = {} } = payload
-    if (command === 'SCENES_NEXT') return this.scenario.playNext(options).then(userFunc)
-    if (command === 'SCENES_PREV') return this.scenario.playPrev(options).then(userFunc)
+    if (command === 'SCENES_NEXT') {
+      return this.scenario.playNext(options).then(userFunc)
+    }
+    if (command === 'SCENES_PREV') {
+      return this.scenario.playPrev(options).then(userFunc)
+    }
     if (command === 'SCENES_ACT') {
       if (name && typeof name === 'string') {
         this.scenario.playByName(name, options).then(userFunc)
@@ -86,12 +108,18 @@ Module.register('MMM-Scenes', {
       }
       return
     }
-    if (command === 'SCENES_CURRENT') return userFunc({ ok: true, message: 'Current scene info response', response: this.scenario.getCurrentSceneInfo() })
+    if (command === 'SCENES_CURRENT') {
+      return userFunc({
+        ok: true,
+        message: 'Current scene info response',
+        response: this.scenario.getCurrentSceneInfo()
+      })
+    }
+
     return userFunc({ ok: false, message: 'Invalid command' })
   },
 
   socketNotificationReceived: function (notification, payload) {
-    console.log(notification, payload)
     if (notification === 'ACTION') {
       this.command(payload?.command, payload?.payload)
     }
@@ -100,13 +128,17 @@ Module.register('MMM-Scenes', {
     if (type === 'notification') {
       const { notification, payload } = message
       this.sendNotification(notification, Object.assign({}, payload))
-      if (notification === 'SCENES_CHANGED') this.drawIndicator(Number(payload?.options?.expelDuration) + Number(payload?.options?.admitDuration))
+      if (notification === 'SCENES_CHANGED') {
+        this.drawIndicator(
+          Number(payload?.options?.expelDuration) +
+            Number(payload?.options?.admitDuration)
+        )
+      }
     }
   },
 
-  drawIndicator: function (expelDuration = 0) {
-    console.log(expelDuration)
-    this.updateDom(expelDuration)
+  drawIndicator: function (duration = 0) {
+    this.updateDom(duration)
   },
 
   getDom: function () {
@@ -115,7 +147,6 @@ Module.register('MMM-Scenes', {
     if (!this.ready) return dom
     const info = this.scenario.getCurrentSceneInfo()
     const { scenario, index, name } = info
-    console.log('scene', info)
 
     if (isNaN(index) || index < 0) {
       const d = document.createElement('span')
@@ -127,14 +158,20 @@ Module.register('MMM-Scenes', {
     }
 
     const inactiveIndicators = Array.from(scenario, (el, ix) => {
-      return this.config.inactiveIndicators?.[ix] || this.config.inactiveIndicators[this.config.inactiveIndicators.length - 1]
+      return (
+        this.config.inactiveIndicators?.[ix] ||
+        this.config.inactiveIndicators[
+          this.config.inactiveIndicators.length - 1
+        ]
+      )
     })
 
     const activeIndicators = Array.from(scenario, (el, ix) => {
-      return this.config.activeIndicators?.[ix] || this.config.activeIndicators[this.config.activeIndicators.length - 1]
+      return (
+        this.config.activeIndicators?.[ix] ||
+        this.config.activeIndicators[this.config.activeIndicators.length - 1]
+      )
     })
-
-    console.log(activeIndicators, inactiveIndicators)
 
     for (let i = 0; i < inactiveIndicators.length; i++) {
       const d = document.createElement('span')

@@ -9,7 +9,8 @@ module.exports = NodeHelper.create({
     this.expressApp.get('/scenes/:action', (req, res) => {
       if (req.params.action) {
         if (req.params.action === 'next' || req.params.action === 'prev') {
-          const command = (req.params.action === 'next') ? 'SCENES_NEXT' : 'SCENES_PREV'
+          const command =
+            req.params.action === 'next' ? 'SCENES_NEXT' : 'SCENES_PREV'
           console.log(command)
           this.sendSocketNotification('ACTION', { command })
           res.status(200).send({ status: 200 })
@@ -29,7 +30,10 @@ module.exports = NodeHelper.create({
         } else if (typeof req.params.action === 'string') {
           payload.name = req.params.action
         }
-        this.sendSocketNotification('ACTION', { command: 'SCENES_ACT', payload })
+        this.sendSocketNotification('ACTION', {
+          command: 'SCENES_ACT',
+          payload
+        })
         res.status(200).send({ status: 200 })
         return
       }

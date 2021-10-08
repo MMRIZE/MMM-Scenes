@@ -4,7 +4,8 @@
   "description": "MagicMirror Module to paging with animation",
   "main": "MMM-Scenes.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "standard": "npx standard",
+    "postinstall": "cp animations.mjs.origin animations.mjs"
   },
   "repository": {
     "type": "git",
@@ -28,7 +29,7 @@
   "devDependencies": {
     "babel-eslint": "^10.1.0",
     "eslint-plugin-html": "^6.2.0",
-    "prettier-standard": "^16.4.1",
+    "prettier-standard": "^13.0.6",
     "standard": "^16.0.4"
   },
   "standard": {

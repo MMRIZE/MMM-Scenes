@@ -9,9 +9,16 @@ let _sendMessage = () => {}
 
 class Animator {
   static factory (animation) {
-    if (typeof animation === 'string') animation = Animation[animation] || Animator.defaultAnimation
-    if (typeof animation === 'function') return animation
-    if (Array.isArray(animation) || typeof animation === 'object') return Animator.keyframeWrapper()
+    if (typeof animation === 'string') {
+      animation = Animation[animation] || Animator.defaultAnimation
+    }
+
+    if (typeof animation === 'function') {
+      return animation
+    }
+    if (Array.isArray(animation) || typeof animation === 'object') {
+      return Animator.keyframeWrapper()
+    }
   }
 
   static keyframeWrapper () {
@@ -25,7 +32,7 @@ class Animator {
   static defaultAnimation ({ moduleWrapper, duration, isExpel }) {
     return new Promise((resolve, reject) => {
       moduleWrapper.style.transition = 'opacity ' + duration / 1000 + 's'
-      moduleWrapper.style.opacity = (isExpel) ? 0 : 1
+      moduleWrapper.style.opacity = isExpel ? 0 : 1
       setTimeout(() => {
         resolve()
       }, duration)
@@ -93,15 +100,22 @@ class Scene {
     const modulesToKill = MM.getModules().exceptWithClass(this.#name)
     const promises = []
     for (const module of modulesToKill) {
-      if (module.hidden) module.hide(0, { lockString: this.#options.lockString })
+      if (module.hidden) {
+        module.hide(0, { lockString: this.#options.lockString })
+      }
       const moduleWrapper = document.getElementById(module.identifier)
       if (!moduleWrapper) continue
       const duration = this.#options.expelDuration
-      promises.push(new Promise((resolve, reject) => {
-        Animator.factory(this.#options.expelAnimation)({ module, moduleWrapper, duration, isExpel: true }, this.#options.expelAnimation).then(() => {
-          module.hide(0, resolve, { lockString: this.#options.lockString })
+      promises.push(
+        new Promise((resolve, reject) => {
+          Animator.factory(this.#options.expelAnimation)(
+            { module, moduleWrapper, duration, isExpel: true },
+            this.#options.expelAnimation
+          ).then(() => {
+            module.hide(0, resolve, { lockString: this.#options.lockString })
+          })
         })
-      }))
+      )
       if (this.#options.expelGap) await asleep(this.#options.expelGap)
     }
     await Promise.allSettled(promises)
@@ -114,12 +128,22 @@ class Scene {
       const moduleWrapper = document.getElementById(module.identifier)
       if (!moduleWrapper) continue
       if (!module.hidden) continue
-      if (!module.lockString || module.lockString.length === 0 || (module.lockString.length === 1 && module.lockString.includes(this.#options.lockString))) {
-        promises.push(new Promise((resolve, reject) => {
-          module.show(0, { lockString: this.#options.lockString })
-          const duration = this.#options.admitDuration
-          Animator.factory(this.#options.admitAnimation)({ module, moduleWrapper, duration, isExpel: false }, this.#options.admitAnimation).then(resolve)
-        }))
+      if (
+        !module.lockString ||
+        module.lockString.length === 0 ||
+        (module.lockString.length === 1 &&
+          module.lockString.includes(this.#options.lockString))
+      ) {
+        promises.push(
+          new Promise((resolve, reject) => {
+            module.show(0, { lockString: this.#options.lockString })
+            const duration = this.#options.admitDuration
+            Animator.factory(this.#options.admitAnimation)(
+              { module, moduleWrapper, duration, isExpel: false },
+              this.#options.admitAnimation
+            ).then(resolve)
+          })
+        )
       }
       if (this.#options.admitGap) await asleep(this.#options.admitGap)
     }
@@ -162,11 +186,15 @@ class Scenes {
     if (s) this.#scenes.push(s)
   }
 
-  setLoop (loop) { // resreved for dynamic optionsuration
-    this.#autoLoop = (['no', 'once', 'infinity'].includes(loop)) ? loop : 'infinity'
+  setLoop (loop) {
+    // resreved for dynamic optionsuration
+    this.#autoLoop = ['no', 'once', 'infinity'].includes(loop)
+      ? loop
+      : 'infinity'
   }
 
-  setDefaults (defaults) { // reserved for dynamic optionsuration
+  setDefaults (defaults) {
+    // reserved for dynamic optionsuration
     this.#defaults = Object.assign({}, this.#defaults, defaults)
   }
 
@@ -192,7 +220,9 @@ class Scenes {
           name: newScene.name,
           index: newScene.index,
           duration: newScene.duration,
-          scenario: this.#scenes.map((s) => { return s.name }),
+          scenario: this.#scenes.map(s => {
+            return s.name
+          }),
           autoLoop: this.#autoLoop,
           options: newScene.options
         }
@@ -206,9 +236,19 @@ class Scenes {
           if (newScene.id === this.#_curSceneId) this.playNext()
         }, newScene.duration)
       }
-      return { ok: true, index: newScene.index, name: newScene.name, message: 'Success to play the scene' }
+      return {
+        ok: true,
+        index: newScene.index,
+        name: newScene.name,
+        message: 'Success to play the scene'
+      }
     }
-    return { ok: false, index: newScene.index, name: newScene.name, message: 'Scene is interrupted.' }
+    return {
+      ok: false,
+      index: newScene.index,
+      name: newScene.name,
+      message: 'Scene is interrupted.'
+    }
   }
 
   async playNext (options) {
@@ -225,28 +265,50 @@ class Scenes {
     if (this.#scenes?.[index]) {
       return await this.playScene(this.#scenes[index], options)
     }
-    return { ok: false, index: null, name: null, message: 'Invalid scene index.' }
+    return {
+      ok: false,
+      index: null,
+      name: null,
+      message: 'Invalid scene index.'
+    }
   }
 
   async playByName (name, options) {
     const scene = this.#requestSceneByName(name)
     if (scene) return await this.playScene(scene, options)
-    return { ok: false, index: null, name: null, message: 'Invalid scene name.' }
+    return {
+      ok: false,
+      index: null,
+      name: null,
+      message: 'Invalid scene name.'
+    }
   }
 
   #requestSceneByName (name) {
-    const index = this.#scenes.findIndex((s) => {
+    const index = this.#scenes.findIndex(s => {
       return s.name === name
     })
-    if (index < 0) return new Scene({ scene: name, options: this.#defaults, index: null })
+    if (index < 0) {
+      return new Scene({ scene: name, options: this.#defaults, index: null })
+    }
     return this.#scenes[index]
   }
 
   #getIndexInfo (index) {
     let prevIndex, nextIndex
     if (this.#scenes?.[index]) {
-      prevIndex = (index > 0) ? index - 1 : ((this.#autoLoop === 'once') ? null : this.#scenes.length - 1)
-      nextIndex = (index < this.#scenes.length - 1) ? index + 1 : ((this.#autoLoop === 'once') ? null : 0)
+      prevIndex =
+        index > 0
+          ? index - 1
+          : this.#autoLoop === 'once'
+            ? null
+            : this.#scenes.length - 1
+      nextIndex =
+        index < this.#scenes.length - 1
+          ? index + 1
+          : this.#autoLoop === 'once'
+            ? null
+            : 0
     } else {
       index = null
       prevIndex = null
@@ -259,7 +321,11 @@ class Scenes {
     const { nextIndex, prevIndex } = this.#getIndexInfo(this.#_curSceneIndex)
 
     const result = {
-      scenario: [...this.#scenes.map((s) => { return s.name })],
+      scenario: [
+        ...this.#scenes.map(s => {
+          return s.name
+        })
+      ],
       autoLoop: this.#autoLoop,
       nextIndex,
       prevIndex
