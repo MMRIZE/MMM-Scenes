@@ -1,0 +1,45 @@
+{
+  "name": "mmm-scenes",
+  "version": "1.0.0",
+  "description": "MagicMirror Module to paging with animation",
+  "main": "MMM-Scenes.js",
+  "scripts": {
+    "standard": "npx standard",
+    "postinstall": "cp animations.mjs.origin animations.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MMRIZE/MMM-Scenes.git"
+  },
+  "keywords": [
+    "MagicMirror",
+    "MM",
+    "paging",
+    "animation"
+  ],
+  "author": "eouia0819@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MMRIZE/MMM-Scenes/issues"
+  },
+  "homepage": "https://github.com/MMRIZE/MMM-Scenes#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "eslint-plugin-html": "^6.2.0",
+    "prettier-standard": "^13.0.6",
+    "standard": "^16.0.4"
+  },
+  "standard": {
+    "plugins": [
+      "html"
+    ],
+    "parser": "babel-eslint",
+    "globals": [
+      "Module",
+      "MM"
+    ]
+  }
+}

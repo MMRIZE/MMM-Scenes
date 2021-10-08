@@ -1,0 +1,15 @@
+.scenes_indicator_scene {
+  margin-left: 5px;
+  margin-right: 5px;
+  display: inline-block;
+}
+
+
+.scenes_indicator_scene.inactive {
+  color: #999;
+}
+
+.scenes_indicator_scene.active {
+  color: #FFF;
+  font-weight: bold;
+}
