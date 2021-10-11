@@ -4,7 +4,6 @@
   display: inline-block;
 }
 
-
 .scenes_indicator_scene.inactive {
   color: #999;
 }
@@ -12,4 +11,11 @@
 .scenes_indicator_scene.active {
   color: #FFF;
   font-weight: bold;
+}
+
+.scenes_indicator_scene.first::before {
+  content: ""
+}
+.scenes_indicator_scene.last::after {
+  content: ""
 }

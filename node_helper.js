@@ -11,7 +11,6 @@ module.exports = NodeHelper.create({
         if (req.params.action === 'next' || req.params.action === 'prev') {
           const command =
             req.params.action === 'next' ? 'SCENES_NEXT' : 'SCENES_PREV'
-          console.log(command)
           this.sendSocketNotification('ACTION', { command })
           res.status(200).send({ status: 200 })
           return
