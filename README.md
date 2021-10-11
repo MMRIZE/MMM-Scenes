@@ -126,7 +126,7 @@ config: {
   scenario: ["scene1", "scene2", "scene1", "scene3", "scene1", "scene4"],
 }
 ```
-All the scenes have the same properties in the above global property values by default. But you can specify a scene with scene definition in `scenario`.
+All the scenes have the same global properties by default. But you can specify a scene with scene definitions in `scenario`.
 ```js
 config: {
   duration: 10 * 60 * 1000,
