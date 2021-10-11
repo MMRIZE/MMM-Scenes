@@ -11,17 +11,53 @@ MagicMirror module to change screen scenes by time and order with **ANIMATION EF
 
 
 
+
+## TOC
+- [MMM-Scenes](#mmm-scenes)
+  * [Demo](#demo)
+  * [Concept](#concept)
+  * [Features](#features)
+  * [Install](#install)
+  * [Config](#config)
+  * [Global options](#global-options)
+  * [Assign scene to modules](#assign-scene-to-modules)
+  * [Describe scenes in `scenario`](#describe-scenes-in-scenario)
+  * [Animation](#animation)
+    + [- `predefined animation name`](#--predefined-animation-name)
+    + [- `keyframe array or object`](#--keyframe-array-or-object)
+    + [- `custom animation function`](#--custom-animation-function)
+  * [Notifications & WebAPI endpoints](#notifications--webapi-endpoints)
+    + [Incoming notifications](#incoming-notifications)
+      - [`SCENES_NEXT`, payload: { callback, options }](#scenes_next-payload--callback-options-)
+      - [`SCENES_PREV`, payload: { callback, options }](#scenes_prev-payload--callback-options-)
+      - [`SCENES_ACT`, payload: { callback, options, name, index }](#scenes_act-payload--callback-options-name-index-)
+      - [`SCENES_CURRENT`, payload: { callback }](#scenes_current-payload--callback-)
+    + [Outgoing notification](#outgoing-notification)
+      - [`SCENES_CHANGED`, payload: { name, index, duration, scenario, autoLoop }](#scenes_changed-payload--name-index-duration-scenario-autoloop-)
+    + [WebAPI endpoints](#webapi-endpoints)
+      - [GET /scenes/next](#get-scenesnext)
+      - [GET /scenes/prev](#get-scenesprev)
+      - [GET /scenes/act/:indexNumber](#get-scenesactindexnumber)
+      - [GET /scenes/act/:sceneName](#get-scenesactscenename)
+  * [Indicators](#indicators)
+  * [Predefined animation](#predefined-animation)
+  * [Info](#info)
+    + [Memo](#memo)
+    + [History](#history)
+      - [1.0.0 (2021-10-12)](#100-2021-10-12)
+    + [Author](#author)
+
 ## Concept
-The scenario of MM screen is made up of a series of sceans. Each module has its role in its appearnace scenes, so they will enter and exit as the scenario. 
+The scenario of the MM screen is made up of a series of scenes. Each module has its role in its appearance scenes to enter and exit by design. 
 
-When a scene begins, all modules who's role is finished, will be expelled, and all modules who have the roles in that scene, will be admitted.
+When a scene begins, all modules whose roles end, will be expelled, and all modules that have the parts in that scene will be admitted.
 
-As describe the scenario of modules, your MM screen will play a drama.
+As described in the scenario, your MM screen will play a drama with modules.
 
 
 ## Features
-- control show/hide modules by assigning scene names into module's class
-- custom animations for module's expel/admit
+- control show/hide modules by assigning scene names into the module's class
+- custom animations for modules expel/admit
 - control scenes by notification and WebURL endpoints.
 - Loop control
 
@@ -46,27 +82,28 @@ npm install
   }
 }
 ```
+You can find an example in th `examples` directory.
 ## Global options
-These options will apply to each scenes unless defined in the scene newly. All the properties are omittable and if omitted, default value will be used.
+These options will apply to each scene unless defined in the scene newly. All the properties are omittable, and if omitted, a default value will be used.
 |**property**|**default**|**description**|
 |---|---|---|
 |`scenario`| [] | The order-set of scenes. You can set the scene name(class name) or scene definition (object) as the items of this property.| 
 |`autoLoop`| "infinity"| Looping scenes in `scenario`. <br> Available values: `"no"`, `"once"`, `"infinity"` <br> Default Value: `"infinity"`|
 |`startScene`| '' | (optional) If set, this scene will be displayed on startup. If omitted, the first scene of `scenario` will be displayed at first.|
-|`duration`|10000| (ms) When the next scene will come after current scene starts. On `autoLoop = no`, this will be ignored. |
+|`duration`|10000| (ms) When the next scene will come after the current scene starts. On `autoLoop = no`, this will be ignored. |
 |`admitAnimation`| "default" | When the scene starts, how the modules will appear. See [animation](#animation)|
 |`admitDuration`|1000| (ms) speed of `admitAnimation`|
-|`admitGap`|0| (ms) the enterance gap of modules in `admitAnimation`<br> In `admitGap = 0` all roled modules will enter together, in `admitGap = 500` each roled module will enter sequentially with 500ms of delay. |
-|`expelAnimation` |"default"| Before new scene starts, how unroled modules will be expelled. See [animation](#animation)|
+|`admitGap`|0| (ms) the entrance gap of modules in `admitAnimation`<br> In `admitGap = 0` all roled modules will enter together, in `admitGap = 500` each roled module will enter sequentially with 500ms of delay. |
+|`expelAnimation` |"default"| Before the new scene starts, how unrolled modules will be expelled. See [animation](#animation)|
 |`expelDuration` | 1000| (ms) speed of `expelAnimation`|
 |`expelGap`|0| (ms) the exit gap of modules in `expelAnimation`|
 |`lockString`|"mmm-scenes"| Lock-key of MM's locking mechanism. Generally, you don't need to touch. |
-|`inactiveIndicators`| ['□'] | Array of inactive scene indicators See [indicators](#indicators) |
-|`activeIndicators`| ['■'] | Array of active scene indicators. See [indicators](#indicators)
+|`inactiveIndicators`| ['○'] | Array of inactive scene indicators See [indicators](#indicators) |
+|`activeIndicators`| ['●'] | Array of active scene indicators. See [indicators](#indicators)
 
 ## Assign scene to modules
 
-Usually, A scene is defined as text. If you want some module to admit into the specific scene, give the scene name as module's class name. 
+Usually, A scene is defined as text. If you want some module to admit into the specific scene, give the scene name as the module's class name. 
 ```js
 {
   module: "clock",
@@ -79,17 +116,17 @@ Usually, A scene is defined as text. If you want some module to admit into the s
   classes: "scene2"
 }
 ```
-In this example, `clock` module will appear in `scene1` and `scene3` and will be expelled from `scene2` or `scene4`. `helloworld` module will appear only in `scene2`
+In this example, the `clock` module will appear in `scene1` and `scene3` and will be expelled from `scene2` or `scene4`. `helloworld` module will appear only in `scene2`.
 
 ## Describe scenes in `scenario`
 
-In module's configuration, you can describe `scenario` with which scenes will appear by order.
+In the module's configuration, you can describe `scenario` with which scenes will appear by order.
 ```js
 config: {
   scenario: ["scene1", "scene2", "scene1", "scene3", "scene1", "scene4"],
 }
 ```
-All the scenes have same properties in above global property-values by default. But you can specify scene with scene definition in `scenario`
+All the scenes have the same properties in the above global property values by default. But you can specify a scene with scene definition in `scenario`.
 ```js
 config: {
   duration: 10 * 60 * 1000,
@@ -111,18 +148,18 @@ In this example, `scene1`, `scene2` and `scene4` will have `10 * 60 * 1000` as `
 `scene object (scene3)` should have `name` property. Other available properties are `admitAnimation`, `admitDuration`, `admitGap`, `expelAnimation`, `expelDuration`, `expelGap` and `duration`
 
 ## Animation
-`admitAnimation` and `expelAnimation` would point which animation effect would be applied into each scene transition.
-They could have 3 types of values as definition of animation.
+`admitAnimation` and `expelAnimation` would point which animation effect would be applied to each scene transition.
+They could have three types of values as a definition of animation.
 
 ### - `predefined animation name`
-In `animation.mjs` file, predefined animation behaviours are prepared. You can select one of them for your animation effect. 
+Some predefined animation behaviours are prepared in `animation.mjs` file. You can select one of them for your animation effect. 
 ```js
 expelAnimation: "jelly",
 admitAnimation: "pageDown"
 ```
 
 ### - `keyframe array or object` 
-Or you can set `keyframe` array or object for your own custom animation. (See [reference](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Keyframe_Formats))
+Or you can set a `keyframe` array or object for your own custom animation. (See [reference](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Keyframe_Formats))
 ```js
 expelAnimation: [ // keyframe array
   { opacity: 1, transform: 'scale(1, 1)' },
@@ -137,7 +174,7 @@ admitAnimation: { // keyframe object
 ```
 
 ### - `custom animation function`
-Or you can assign your own animation function to control more detailly. Animation function should return `Promise` or be `async function` to know when the animation finishes.
+Or you can assign your custom animation function to control more detailly. The animation function should return `Promise` or be `async function` to know when the animation finishes.
 ```js
 expelAnimation: async ({ moduleWrapper, duration }) => {
   const asleep = (ms) => {
@@ -169,7 +206,7 @@ admitAnimation: ({ moduleWrapper, duration, module }) => {
 
 You can also add your custom animation function into `animation.mjs` file, then use it's name simply.
 
-An animation function will get `DefinitionObject { moduleWrapper, module, duration, isExpel }` argument. Return value has to be `Promise`
+An animation function will get `DefinitionObject { moduleWrapper, module, duration, isExpel }` argument. Return value has to be a `Promise`.
 
 ```js
 animation = async (DefinitionObject) => {
@@ -186,14 +223,14 @@ animation = async (DefinitionObject) => {
 ```
 
 ## Notifications & WebAPI endpoints
-### Incoming notifications (control notification)
-- Each incoming notification could have a `callback` function as a member of payload. It will be called when your notification requsting is done and `admitAnimation` is finished.
+### Incoming notifications
+- Each incoming notification could have a `callback` function as a member of the payload. It will be called when your notification requesting is done, and `admitAnimation` is finished.
 ```js
 this.sendNotification('SCENE_NEXT', {
   callback: (response) => { console.log(response.ok) }
 })
 ```
-- You can override animation for this instant scene changing with `payload.options` 
+- You can override animation for this instant scene changing with `payload.options`.
 ```js
 this.sendNotification('SCENE_ACT', {
   index: 1,
@@ -205,20 +242,23 @@ this.sendNotification('SCENE_ACT', {
 })
 ```
 #### `SCENES_NEXT`, payload: { callback, options }
-Play next scene. If current scene is not inside of `scenario`, the next scene will be the first scene(index: 0) of the `scenario`
+Play next scene. If the current scene is not inside the `scenario`, the next scene will be the first scene(index: 0).
 
 #### `SCENES_PREV`, payload: { callback, options }
-Play previous scene. If current scene is not inside of `scenario`, the previous scene doesn't exist. 
+Play previous scene. If the current scene is not inside of `scenario`, the previous scene doesn't exist. 
 
 #### `SCENES_ACT`, payload: { callback, options, name, index }
 Play specific scene. 
-- With `name` payload, It will show the modules which have that name as class. If not exists, no module will appear. (Empty screen)
-- With `index` payload, It will show the Nth module of scenario. If wrong index, nothing happened. The index is zero-based. (index:0 => first scene, index:1 => second scene)
-- If `name` and `index` are used together at same time, `name` is prior to `index`
+
+- With the `name` payload, It will show the modules which have that name as a class. If not exists, no module will appear. (Empty screen)
+
+- With the `index` payload, It will show the Nth module of the scenario. If with the wrong index, nothing will happen. The index is zero-based. (index:0 => first scene, index:1 => second scene)
+
+- If `name` and `index` are used together simultaneously, `name` is primary to `index`.
 
 
 #### `SCENES_CURRENT`, payload: { callback }
-Ask information of current scene. `callback` function will get various data object as an argument.
+Ask about the current scene. The `callback` function will get a data object as an argument.
 ```js
 this.sendNotification('SCENES_CURRENT' { callback: (info) => {
   console.log(info)
@@ -240,7 +280,7 @@ this.sendNotification('SCENES_CURRENT' { callback: (info) => {
 
 ### Outgoing notification
 #### `SCENES_CHANGED`, payload: { name, index, duration, scenario, autoLoop }
-When scene is changed, this information will be emitted.
+When a scene is changed, this notification will be emitted.
 
 
 
@@ -252,13 +292,13 @@ Play next scene.
 #### GET /scenes/prev
 Play previous scene
 #### GET /scenes/act/:indexNumber
-Play specific scene with index
+Play specific scene by given index
 ```
 http://localhost/scenes/act/1
 ```
 
 #### GET /scenes/act/:sceneName
-Play specific scene with name
+Play specific scene by given name
 ```
 http://localhost/scenes/act/scene2
 ```
@@ -280,9 +320,16 @@ inactiveIndicators: [''],
 activeIndicators: ['Today', 'Family', 'Ent.'],
 ```
 
-- When current scene is not belong to `scenario`, the `scene name` will be displayed instead of scene indicator
-- When the number of indicators are less than that of `scenario`, the last item will be applied to the rest of the `scenario`. (the first example or the third example.)
-- The HTML created will be like this; Indicators are decoratable by CSS in your `custom.css`
+```js
+inactiveIndicators: ['1', '2', '3'],
+activeIndicators: ['1', '2', '3'],
+```
+
+- When the current scene does not belong to `scenario`, the `scene name` will be displayed instead of the scene indicator
+
+- When the number of indicators is less than that of `scenario`, the last item will be applied to the rest. (the first example or the third example.)
+
+- You can decorate the indicators with CSS  in your `custom.css`; The HTML created will be like this
 ```html
 <div class="scenes_indicator">
   <span class="scenes_indicator_scene index_0 inactive first">○</span>
@@ -291,6 +338,7 @@ activeIndicators: ['Today', 'Family', 'Ent.'],
 <div>
 ```
 ```css
+/* Just an example */
 .scenes_indicator_scene {
   margin-left: 5px;
   margin-right: 5px;
@@ -307,9 +355,29 @@ activeIndicators: ['Today', 'Family', 'Ent.'],
 }
 
 .scenes_indicator_scene.first::before {
-  contents: "[ "
+  content: "[ "
 }
-.scenes_indicator_scene.first::after {
-  contents: " ]"
+.scenes_indicator_scene.last::after {
+  content: " ]"
 }
 ```
+
+## Predefined animation
+- See [animations.mjs.origin](./animations.mjs.origin). It will be copied to `animations.mjs`. You can add your custom animation definition in that file. (PR will be welcomed for more animations.)
+
+
+
+## Info
+### Memo
+- RPI3 or older/weaker SBC doesn't have enough power to handle the animation. In that case, just use animation `default` or avoid serious effects.
+
+### History
+#### 1.0.0 (2021-10-12)
+- released
+
+
+### Author
+- Seongnoh Yi (eouia0819@gmail.com)
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/Y8Y56IFLK)
+

@@ -11,8 +11,8 @@ Module.register('MMM-Scenes', {
     autoLoop: 'infinity',
     lockString: 'mmm-scenes',
     startScene: '',
-    inactiveIndicators: ['_'],
-    activeIndicators: ['O']
+    inactiveIndicators: ['○'],
+    activeIndicators: ['●']
   },
 
   getStyles: function () {
@@ -74,7 +74,6 @@ Module.register('MMM-Scenes', {
 
     if (notification === 'DOM_OBJECTS_CREATED') {
       this._domCreated()
-      this.test()
     }
     if (availableCommand.includes(notification)) {
       this.command(notification, payload)
@@ -177,8 +176,12 @@ Module.register('MMM-Scenes', {
       const d = document.createElement('span')
       d.classList.add('scenes_indicator_scene')
       d.classList.add('index_' + i)
-      if (index === 0) d.classList.add('first')
-      if (index === inactiveIndicators.length - 1) d.classList.add('last')
+      if (i === 0) {
+        d.classList.add('first')
+      }
+      if (i === inactiveIndicators.length - 1) {
+        d.classList.add('last')
+      }
       if (index === i) {
         d.classList.add('active')
         d.innerHTML = activeIndicators[i]
