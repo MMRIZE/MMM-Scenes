@@ -58,27 +58,25 @@ Module.register('MMM-Scenes', {
       handler.reply("TEXT", "Scene name: " + name)
     }
     if (handler.args['nextprev'] == 'next') {
-      handler.reply("TEXT", "Playing next scene")
       this.scenario.playNext()
       scene_info = this.scenario.getCurrentSceneInfo()
       var { scenario, index, name } = scene_info
-      handler.reply("TEXT", "Scene name: " + name)
+      handler.reply("TEXT", "Playing next scene\nScene name: " + name)
     }
     if (handler.args['nextprev'] == 'prev') {
-      handler.reply("TEXT", "Playing previous scene")
       this.scenario.playPrev()
       scene_info = this.scenario.getCurrentSceneInfo()
       var { scenario, index, name } = scene_info
-      handler.reply("TEXT", "Scene name: " + name)
+      handler.reply("TEXT", "Playing previous scene\nScene name: " + name)
     }
     if (handler.args['scenename'][1]) {
       if (typeof handler.args['scenename'][1] === 'string') {
         const scene_name = handler.args['scenename'][1]
-        handler.reply("TEXT", "Playing scene by name: " + scene_name)
         this.scenario.playByName(scene_name)
         scene_info = this.scenario.getCurrentSceneInfo()
         var { scenario, index, name } = scene_info
-        handler.reply("TEXT", "Scene index: " + index)
+        handler.reply("TEXT", "Playing scene by name: " +
+                               scene_name + "\nScene index: " + index)
       }
     }
   },
@@ -89,11 +87,12 @@ Module.register('MMM-Scenes', {
       var scene_index = handler.args['sceneindex'][0]
       if (!isNaN(scene_index)) {
         if (scene_index >= 0) {
-          handler.reply("TEXT", "Playing scene index " + scene_index.toString())
           this.scenario.playByIndex(scene_index)
           const scene_info = this.scenario.getCurrentSceneInfo()
           const { scenario, index, name } = scene_info
-          handler.reply("TEXT", "Scene name: " + name)
+          handler.reply("TEXT", "Playing scene index " +
+                                 scene_index.toString() +
+                                 "\nScene name: " + name)
         }
       }
     }
