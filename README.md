@@ -39,6 +39,9 @@ MagicMirror module to change screen scenes by time and order with **ANIMATION EF
       - [GET /scenes/prev](#get-scenesprev)
       - [GET /scenes/act/:indexNumber](#get-scenesactindexnumber)
       - [GET /scenes/act/:sceneName](#get-scenesactscenename)
+    + [TelegramBot integration](#telegrambot-integration)
+      - [TelegramBot installation](#telegrambot-installation)
+      - [Telegram usage](#telegram-usage)
   * [Indicators](#indicators)
   * [Predefined animation](#predefined-animation)
   * [Info](#info)
@@ -60,6 +63,7 @@ As described in the scenario, your MM screen will play a drama with modules.
 - custom animations for modules expel/admit
 - control scenes by notification and WebURL endpoints.
 - Loop control
+- custom indicators
 
 ## Install
 ```sh
@@ -304,6 +308,46 @@ http://localhost/scenes/act/scene2
 ```
 
 
+### TelegramBot integration
+You can control MMM-Scenes using the Telegram app by installing the
+[MMM-TelegramBot](https://github.com/bugsounet/MMM-TelegramBot)
+module and adding MMM-TelegramBot configuration to your scenes.
+
+#### TelegramBot installation
+Follow the instructions at the
+[4th Party Modules Wiki](http://wiki.bugsounet.fr/en/MMM-TelegramBot)
+to create a Telegram Bot, install MMM-TelegramBot, and configure your
+MagicMirror `config.js` to enable Telegram commands.
+
+**Note:** You do not need to create custom commands. The Telegram commands used
+with MMM-Scenes are already created by the module. You only need to follow the
+[4th Party Modules Wiki Installation instructions](http://wiki.bugsounet.fr/en/MMM-TelegramBot/Installation).
+
+#### Telegram usage
+Once installed and configured, you can control your MMM-Scenes display
+by sending messages in the Telegram app to your previously created Telegram Bot.
+The supported commands are as follows:
+
+- /scene info
+- /scene next
+- /scene prev
+- /scene name:scenename
+- /scene_index &lt;number&gt;
+
+For example, to play the scene named 'scene1' in the scenario, issue the command:
+
+```
+/scene name:scene1
+```
+
+To play scene index 2 in the scenario, issue the command:
+
+```
+/scene_index 2
+```
+
+
+
 ## Indicators
 ```js
 inactiveIndicators: ['○'],
@@ -372,6 +416,8 @@ activeIndicators: ['1', '2', '3'],
 - RPI3 or older/weaker SBC doesn't have enough power to handle the animation. In that case, just use animation `default` or avoid serious effects.
 
 ### History
+#### 1.1.0 (2021-11-01)
+- **ADDED** : `MMM-TelegramBot` commandable. (Thanks to @doctorfree)
 #### 1.0.0 (2021-10-12)
 - released
 
