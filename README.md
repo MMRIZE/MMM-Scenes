@@ -60,6 +60,7 @@ As described in the scenario, your MM screen will play a drama with modules.
 - custom animations for modules expel/admit
 - control scenes by notification and WebURL endpoints.
 - Loop control
+- custom indicators
 
 ## Install
 ```sh
