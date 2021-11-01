@@ -416,6 +416,8 @@ activeIndicators: ['1', '2', '3'],
 - RPI3 or older/weaker SBC doesn't have enough power to handle the animation. In that case, just use animation `default` or avoid serious effects.
 
 ### History
+#### 1.1.0 (2021-11-01)
+- **ADDED** : `MMM-TelegramBot` commandable. (Thanks to @doctorfree)
 #### 1.0.0 (2021-10-12)
 - released
 
