@@ -19,6 +19,85 @@ Module.register('MMM-Scenes', {
     return ['MMM-Scenes.css']
   },
 
+  // TelegramBot integration
+  getCommands: function(commander) {
+    commander.add(
+      {
+        // Adds Telegram command '/scene'
+        // Usage: /scene [info|next|prev]
+        //   or   /scene name:<scene name>
+        //   to play the scene named 'scene1' in the scenario:
+        //   /scene name:scene1
+        command: 'scene',
+        description: "Play next|prev|name:str\nTry `/scene next`.",
+        callback: 'command_scene',
+        args_pattern : ['info|next|prev', "/name:([a-z]+)/"],
+        args_mapping : ["nextprev", "scenename"]
+      }
+    )
+    commander.add(
+      {
+        // Adds Telegram command '/scene_index'
+        // Usage: /scene_index <scene index>
+        //   e.g. to play the second defined scene in the scenario:
+        //   /scene_index 1
+        command: 'scene_index',
+        description: "Play scene by index\nTry `/scene_index 1`.",
+        callback: 'command_scene_index',
+        args_pattern : ["/([0-9]+)/"],
+        args_mapping : ["sceneindex"]
+      }
+    )
+  },
+
+  // Callback for /scene Telegram command
+  command_scene: function(command, handler) {
+    var scene_info = this.scenario.getCurrentSceneInfo()
+    var { scenario, index, name } = scene_info
+    if (handler.args['nextprev'] == 'info') {
+      handler.reply("TEXT", "Scene name: " + name)
+    }
+    if (handler.args['nextprev'] == 'next') {
+      this.scenario.playNext()
+      scene_info = this.scenario.getCurrentSceneInfo()
+      var { scenario, index, name } = scene_info
+      handler.reply("TEXT", "Playing next scene\nScene name: " + name)
+    }
+    if (handler.args['nextprev'] == 'prev') {
+      this.scenario.playPrev()
+      scene_info = this.scenario.getCurrentSceneInfo()
+      var { scenario, index, name } = scene_info
+      handler.reply("TEXT", "Playing previous scene\nScene name: " + name)
+    }
+    if (handler.args['scenename'][1]) {
+      if (typeof handler.args['scenename'][1] === 'string') {
+        const scene_name = handler.args['scenename'][1]
+        this.scenario.playByName(scene_name)
+        scene_info = this.scenario.getCurrentSceneInfo()
+        var { scenario, index, name } = scene_info
+        handler.reply("TEXT", "Playing scene by name: " +
+                               scene_name + "\nScene index: " + index)
+      }
+    }
+  },
+
+  // Callback for /scene_index Telegram command
+  command_scene_index: function(command, handler) {
+    if (handler.args['sceneindex'][0]) {
+      var scene_index = handler.args['sceneindex'][0]
+      if (!isNaN(scene_index)) {
+        if (scene_index >= 0) {
+          this.scenario.playByIndex(scene_index)
+          const scene_info = this.scenario.getCurrentSceneInfo()
+          const { scenario, index, name } = scene_info
+          handler.reply("TEXT", "Playing scene index " +
+                                 scene_index.toString() +
+                                 "\nScene name: " + name)
+        }
+      }
+    }
+  },
+
   start: function () {
     this.ready = false
     this.scenario = null
