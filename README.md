@@ -310,7 +310,7 @@ http://localhost/scenes/act/scene2
 
 ### TelegramBot integration
 You can control MMM-Scenes using the Telegram app by installing the
-[MMM-TelegramBot](https://github.com/bugsounet/MMM-TelegramBot)
+[MMM-TelegramBot](https://github.com/eouia/MMM-TelegramBot)
 module and adding MMM-TelegramBot configuration to your scenes.
 
 #### Telegram usage
