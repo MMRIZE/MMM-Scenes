@@ -101,7 +101,7 @@ class Scene {
     const promises = []
     for (const module of modulesToKill) {
       if (module.hidden) {
-        module.hide(0, { lockString: this.#options.lockString })
+        module.hide(0, () => { }, { lockString: this.#options.lockString })
       }
       const moduleWrapper = document.getElementById(module.identifier)
       if (!moduleWrapper) continue
@@ -136,7 +136,7 @@ class Scene {
       ) {
         promises.push(
           new Promise((resolve, reject) => {
-            module.show(0, { lockString: this.#options.lockString })
+            module.show(0, () => { }, { lockString: this.#options.lockString })
             const duration = this.#options.admitDuration
             Animator.factory(this.#options.admitAnimation)(
               { module, moduleWrapper, duration, isExpel: false },
