@@ -1,3 +1,7 @@
+# NOTICE for MM >2.25 USERS
+Use [`MMM-Scenes2`](https://github.com/MMRIZE/MMM-Scenes2) instead of this module from MM 2.25. 
+
+
 # MMM-Scenes
 
 > **“Life is a theatre set in which there are but few practicable entrances.”**
@@ -8,7 +12,7 @@
 MagicMirror module to change screen scenes by time and order with **ANIMATION EFFECT**.
 
 ## Demo
-[![MMM-Scenes Demo](https://img.youtube.com/vi/VgL6rIedXqI/maxresdefault.jpg) Click To Play](https://www.youtube.com/watch?v=VgL6rIedXqI)
+[![MMM-Scenes Demo](https://img.youtube.com/vi/FRQuO8sY-DI/maxresdefault.jpg) Click To Play](https://www.youtube.com/watch?v=FRQuO8sY-DI)
 
 
 
